@@ -1,6 +1,3 @@
-I read the repository through its GitHub/raw endpoints. I do not have a filesystem-write tool in this session, so I cannot overwrite ~/Pr/F/Flydance/README.md directly. The full README content is below; save it over the existing file.
-
----
 
 FlyDance
 
