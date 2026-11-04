@@ -1,36 +1,38 @@
-<p align="center">
-  <img src="https://img.shields.io/badge/EXPERIMENTAL-RESEARCH%20PROJECT-7C3AED?style=for-the-badge&labelColor=18181B">
+ <p align="center">
+  <img src="https://img.shields.io/badge/EXPERIMENTAL-RESEARCH%20PLATFORM-22D3C5?style=for-the-badge&labelColor=111827">
 </p>
 
 <h1 align="center">FlyDance</h1>
 
 <p align="center">
-  <strong>From neural activity to movement — from music to motion.</strong>
+  <strong>Where connectomics meets motion.</strong>
   <br>
-  Audio-driven locomotion and neural simulation in <i>Drosophila melanogaster</i>.
+  An experimental platform integrating whole-brain neural dynamics,
+  audio-driven control, and biomechanical simulation in
+  <i>Drosophila melanogaster</i>.
 </p>
 
 <p align="center">
   <a href="https://www.python.org/">
-    <img alt="Python 3.10" src="https://img.shields.io/badge/Python-3.10-3776AB?style=for-the-badge&logo=python&logoColor=white">
+    <img alt="Python 3.10" src="https://img.shields.io/badge/Python-3.10-38BDF8?style=for-the-badge&logo=python&logoColor=white&labelColor=111827">
   </a>
   <a href="https://github.com/NeLy-EPFL/flygym">
-    <img alt="FlyGym" src="https://img.shields.io/badge/FlyGym-v2.1.0-FF8C42?style=for-the-badge">
+    <img alt="FlyGym v2.1.0" src="https://img.shields.io/badge/FlyGym-v2.1.0-22D3C5?style=for-the-badge&labelColor=111827">
   </a>
   <a href="https://mujoco.org/">
-    <img alt="MuJoCo" src="https://img.shields.io/badge/MuJoCo-Physics%20Engine-00A67E?style=for-the-badge">
+    <img alt="MuJoCo" src="https://img.shields.io/badge/MuJoCo-Physics%20Simulation-FBBF24?style=for-the-badge&labelColor=111827">
   </a>
 </p>
 
 <p align="center">
   <a href="https://flywire.ai/">
-    <img alt="FlyWire" src="https://img.shields.io/badge/FlyWire-Connectome%20v783-64748B?style=for-the-badge">
+    <img alt="FlyWire" src="https://img.shields.io/badge/FlyWire-Connectome%20v783-A78BFA?style=for-the-badge&labelColor=111827">
   </a>
   <a href="https://github.com/eonsystemspbc/fly-brain">
-    <img alt="Fly Brain" src="https://img.shields.io/badge/Fly--Brain-Neural%20Model-9333EA?style=for-the-badge">
+    <img alt="Fly-Brain" src="https://img.shields.io/badge/Fly--Brain-Neural%20Model-818CF8?style=for-the-badge&labelColor=111827">
   </a>
   <a href="LICENSE">
-    <img alt="License" src="https://img.shields.io/badge/License-GPL--2.0-2563EB?style=for-the-badge">
+    <img alt="GPL-2.0" src="https://img.shields.io/badge/License-GPL--2.0-F8FAFC?style=for-the-badge&labelColor=111827">
   </a>
 </p>
 
