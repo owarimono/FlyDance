@@ -1,30 +1,37 @@
-<p align="center"> # FlyDance
+<p align="center">
+  <img src="https://img.shields.io/badge/EXPERIMENTAL-RESEARCH%20PROJECT-7C3AED?style=for-the-badge&labelColor=18181B">
+</p>
+
+<h1 align="center">FlyDance</h1>
 
 <p align="center">
-  <a href="https://github.com/owarimono/FlyDance">
-    <img alt="FlyDance" src="https://img.shields.io/badge/FlyDance-Audio--Driven%20Fly%20Simulation-7C3AED?style=for-the-badge&labelColor=18181B">
-  </a>
+  <strong>From neural activity to movement — from music to motion.</strong>
+  <br>
+  Audio-driven locomotion and neural simulation in <i>Drosophila melanogaster</i>.
+</p>
+
+<p align="center">
   <a href="https://www.python.org/">
-    <img alt="Python 3.10" src="https://img.shields.io/badge/Python-3.10-3776AB?style=for-the-badge&logo=python&logoColor=white&labelColor=18181B">
+    <img alt="Python 3.10" src="https://img.shields.io/badge/Python-3.10-3776AB?style=for-the-badge&logo=python&logoColor=white">
   </a>
   <a href="https://github.com/NeLy-EPFL/flygym">
-    <img alt="FlyGym v2.1.0" src="https://img.shields.io/badge/FlyGym-v2.1.0-FF8C42?style=for-the-badge&labelColor=18181B">
-  </a>
-  <a href="https://flywire.ai/">
-    <img alt="FlyWire Connectome" src="https://img.shields.io/badge/FlyWire-Connectome%20v783-64748B?style=for-the-badge&labelColor=18181B">
+    <img alt="FlyGym" src="https://img.shields.io/badge/FlyGym-v2.1.0-FF8C42?style=for-the-badge">
   </a>
   <a href="https://mujoco.org/">
-    <img alt="MuJoCo" src="https://img.shields.io/badge/MuJoCo-Physics%20Simulation-00A67E?style=for-the-badge&labelColor=18181B">
-  </a>
-  <a href="https://github.com/owarimono/FlyDance/blob/main/LICENSE">
-    <img alt="GPL-2.0" src="https://img.shields.io/badge/License-GPL--2.0-2563EB?style=for-the-badge&labelColor=18181B">
+    <img alt="MuJoCo" src="https://img.shields.io/badge/MuJoCo-Physics%20Engine-00A67E?style=for-the-badge">
   </a>
 </p>
 
 <p align="center">
-  <b>Turning music into movement through computational neuroscience.</b>
-  <br>
-  An experimental platform exploring audio-driven locomotion and neural control in a simulated <i>Drosophila melanogaster</i>.
+  <a href="https://flywire.ai/">
+    <img alt="FlyWire" src="https://img.shields.io/badge/FlyWire-Connectome%20v783-64748B?style=for-the-badge">
+  </a>
+  <a href="https://github.com/eonsystemspbc/fly-brain">
+    <img alt="Fly Brain" src="https://img.shields.io/badge/Fly--Brain-Neural%20Model-9333EA?style=for-the-badge">
+  </a>
+  <a href="LICENSE">
+    <img alt="License" src="https://img.shields.io/badge/License-GPL--2.0-2563EB?style=for-the-badge">
+  </a>
 </p>
 
 ---
