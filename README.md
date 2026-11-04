@@ -1,4 +1,4 @@
-# FlyDance
+<p align="center"> # FlyDance
 
 <p align="center">
   <a href="https://github.com/owarimono/FlyDance">
