@@ -1,353 +1,544 @@
-
 # FlyDance
 
-[![Python](https://img.shields.io/badge/python-3.10-blue.svg)](environment.yml)
-[![License](https://img.shields.io/badge/license-GPL--2.0-blue.svg)](LICENSE)
-[![FlyGym](https://img.shields.io/badge/FlyGym-v2.1.0-orange.svg)](https://github.com/NeLy-EPFL/flygym)
-[![FlyWire](https://img.shields.io/badge/FlyWire-783-lightgrey.svg)](https://flywire.ai/)
+<p align="center">
+  <a href="https://github.com/owarimono/FlyDance">
+    <img alt="FlyDance" src="https://img.shields.io/badge/FlyDance-Audio--Driven%20Fly%20Simulation-7C3AED?style=for-the-badge&labelColor=18181B">
+  </a>
+  <a href="https://www.python.org/">
+    <img alt="Python 3.10" src="https://img.shields.io/badge/Python-3.10-3776AB?style=for-the-badge&logo=python&logoColor=white&labelColor=18181B">
+  </a>
+  <a href="https://github.com/NeLy-EPFL/flygym">
+    <img alt="FlyGym v2.1.0" src="https://img.shields.io/badge/FlyGym-v2.1.0-FF8C42?style=for-the-badge&labelColor=18181B">
+  </a>
+  <a href="https://flywire.ai/">
+    <img alt="FlyWire Connectome" src="https://img.shields.io/badge/FlyWire-Connectome%20v783-64748B?style=for-the-badge&labelColor=18181B">
+  </a>
+  <a href="https://mujoco.org/">
+    <img alt="MuJoCo" src="https://img.shields.io/badge/MuJoCo-Physics%20Simulation-00A67E?style=for-the-badge&labelColor=18181B">
+  </a>
+  <a href="https://github.com/owarimono/FlyDance/blob/main/LICENSE">
+    <img alt="GPL-2.0" src="https://img.shields.io/badge/License-GPL--2.0-2563EB?style=for-the-badge&labelColor=18181B">
+  </a>
+</p>
 
-Audio-driven choreography for a connectome-scale *Drosophila* brain
-simulation, built on FlyGym v2.1.0 and a FlyWire-derived whole-brain LIF model.
-
----
-
-## Table of contents
-
-- [Overview](#overview)
-- [Architecture](#architecture)
-- [Features](#features)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Project structure](#project-structure)
-- [Pipeline](#pipeline)
-- [What is not in this repository](#what-is-not-in-this-repository)
-- [License](#license)
-- [Credits and acknowledgments](#credits-and-acknowledgments)
+<p align="center">
+  <b>Turning music into movement through computational neuroscience.</b>
+  <br>
+  An experimental platform exploring audio-driven locomotion and neural control in a simulated <i>Drosophila melanogaster</i>.
+</p>
 
 ---
 
 ## Overview
 
-FlyDance is a research and creative-coding project that couples two
-independent systems:
+**FlyDance** is an experimental research and creative-coding project that explores the relationship between music, neural activity, and biological movement.
 
-1. **FlyGym v2.1.0** — a MuJoCo-based biomechanical simulation of the adult
-   *Drosophila*, exposed as a Python API for neuro-mechanical experiments.
-2. **A whole-brain LIF model** inherited from the
-   [fly-brain](https://github.com/eonsystemspbc/fly-brain) project, with
-   connectivity derived from the FlyWire connectome (dataset version 783,
-   ~138k neurons).
+It brings together two distinct computational systems:
 
-Audio beat analysis produces a deterministic beat grid that is then mapped
-onto central pattern generators (CPGs), learned low-dimensional policies, or
-dopamine-gated plasticity rules. The resulting motor traces are rendered
-through FlyGym to produce video. The repository additionally retains the
-multi-backend neural benchmark harness from fly-brain.
+- **FlyGym** — a MuJoCo-based biomechanical simulation framework for studying the locomotion of adult fruit flies.
+- **A FlyWire-derived neural model** — a whole-brain Leaky Integrate-and-Fire (LIF) simulation based on connectivity data from the FlyWire connectome.
 
-FlyDance is not a production tool. It is an experimental platform intended
-for research reproduction, teaching, and creative exploration.
+The audio pipeline extracts musical features such as beats, tempo, onset strength, and chroma. These features can then drive different experimental control mechanisms, including Central Pattern Generators (CPGs), reinforcement-learning policies, and dopamine-gated plasticity.
 
----
+The resulting motor behavior is simulated using FlyGym and can be rendered as video.
+
+The repository also includes a separate multi-backend neural benchmarking system for evaluating different implementations of spiking neural network simulations.
+
+> **Project status:** Experimental. FlyDance is intended for exploration, prototyping, and reproducible experimentation. Its current controllers should not be interpreted as biologically validated models of fly dancing or natural musical perception.
 
 ## Architecture
 
-Three subsystems communicate through files and simple in-process APIs:
+FlyDance consists of two largely independent pipelines.
 
+### 1. Audio-driven locomotion
+
+The first pipeline converts an audio track into a beat representation and uses it to control simulated fly movement.
+
+```text
+                 Audio Input
+                      |
+                      v
+              +---------------+
+              | Beat Analysis |
+              | beat_analysis |
+              +---------------+
+                      |
+                      v
+                Beat Grid JSON
+                      |
+                      v
+        +-------------+-------------+
+        |             |             |
+        v             v             v
+     CPG Control   RL Policy    Plasticity
+        |             |             |
+        +-------------+-------------+
+                      |
+                      v
+               FlyGym / MuJoCo
+                      |
+                      v
+                Rendered Video
 ```
 
-audio ──► │  beat_analysis.py  │ ──► <track>.beats.json
-└────────────────────┘
-│
-▼
-┌────────────────────┐        ┌─────────────────────┐
-│  fly_dance.py     │ ─────► │  FlyGym / MuJoCo    │
-│  fly_pop.py        │        │  (biomechanical     │
-│  fly_sim.py        │        │   simulation)       │
-└────────────────────┘        └─────────────────────┘
-│
-▼
-demo_output/**/.mp4
+Different controllers experiment with different approaches to translating musical timing into locomotor behavior.
 
+### 2. Neural simulation and benchmarking
+
+The second pipeline runs spiking neural network simulations using different computational backends.
+
+```text
+             FlyWire Connectivity
+                      |
+                      v
+              Neural Model
+                      |
+                      v
+               Benchmark CLI
+                      |
+          +-----------+-----------+
+          |           |           |
+          v           v           v
+       Brian2      PyTorch      NEST GPU
+          |           |           |
+          +-----------+-----------+
+                      |
+                      v
+               Benchmark Results
+                 CSV / Parquet
 ```
 
----
+This benchmarking infrastructure originates from the external [fly-brain](https://github.com/eonsystemspbc/fly-brain) project and is maintained separately from the audio-driven locomotion experiments.
 
 ## Features
 
-| Capability | Entry point |
-|---|---|
-| Beat, tempo, onset-envelope, and chroma extraction | `beat_analysis.py` |
-| Beat-locked CPG gait modulation | `fly_dance.py` |
-| Browser GUI with streamed MuJoCo frames | `fly_dance_gui.py`, `ado_gui_html.py` |
-| MuJoCo viewer mode with a 3×3 linear brain | `fly_dance_live.py` |
-| Dopamine-gated single-scalar plasticity | `fly_learn_dance.py` |
-| REINFORCE-trained discrete pose policy | `fly_pop.py` |
-| Standalone tripod-CPG walking baseline | `fly_sim.py` |
-| Spike raster, PSTH, and top-neuron plots | `visualize_spikes.py` |
-| SEZ neuron inventory and categorization | `categorize_sez.py`, `explore_sez.py` |
-| Multi-backend neural benchmark runner | `main.py`, `code/` |
+### Audio and locomotion
 
----
+| Feature | Description | Entry point |
+|---|---|---|
+| Audio analysis | Beat, tempo, onset-envelope, and chroma extraction | `beat_analysis.py` |
+| Beat-driven locomotion | Maps musical timing onto a tripod CPG controller | `fly_dance.py` |
+| Browser interface | Local GUI with streamed simulation frames | `fly_dance_gui.py` |
+| Interactive simulation | MuJoCo viewer with a small neural control network | `fly_dance_live.py` |
+| Dopamine-gated plasticity | Experimental single-scalar learning mechanism | `fly_learn_dance.py` |
+| Reinforcement learning | REINFORCE-based discrete pose policy | `fly_pop.py` |
+| Walking baseline | Standalone tripod-CPG locomotion controller | `fly_sim.py` |
+
+### Neural analysis and benchmarking
+
+| Feature | Description | Entry point |
+|---|---|---|
+| Neural benchmarks | Multi-backend simulation benchmark runner | `main.py`, `code/` |
+| Spike visualization | Raster plots, PSTH, and top-neuron activity | `visualize_spikes.py` |
+| SEZ exploration | Inspection of subesophageal zone neuron data | `explore_sez.py` |
+| SEZ categorization | Groups neurons into functional categories | `categorize_sez.py` |
 
 ## Requirements
 
-| Component | Version | Notes |
-|---|---|---|
-| Python | 3.10 | Pinned in `environment.yml` |
-| Conda / Miniconda | any recent | Environment manager |
-| FlyGym | v2.1.0 | Installed separately, not vendored |
-| MuJoCo | bundled with FlyGym | Imported directly by GUI and viewer scripts |
-| CUDA | 12.x | Optional; required only for GPU backends |
-| librosa | any recent | Audio analysis; not pinned in `environment.yml` |
-| soundfile | any recent | librosa I/O backend; not in `environment.yml` |
+### Main environment
 
-The Brian2GeNN backend requires a separate environment (`brian2genn==1.7.0`
-pins `brian2<2.6`, which conflicts with the Brian2CUDA stack). That
-environment is provided as `environment-brian2genn.yml`.
+| Component | Version / Requirement |
+|---|---|
+| Python | 3.10 |
+| Conda / Miniconda | Recent version |
+| FlyGym | v2.1.0 |
+| MuJoCo | Provided through FlyGym |
+| librosa | Required for audio analysis |
+| soundfile | Required for audio file I/O |
 
----
+The main Conda environment is defined in `environment.yml`.
+
+### Optional GPU backends
+
+CUDA 12.x is required only for GPU-based simulation backends.
+
+The Brian2GeNN backend requires a separate environment because its dependency constraints conflict with the main Brian2CUDA stack.
+
+A separate environment definition is provided in:
+
+```text
+environment-brian2genn.yml
+```
 
 ## Installation
 
+### 1. Clone the repository
+
 ```bash
-# 1. Clone the repository
 git clone https://github.com/owarimono/FlyDance.git
 cd FlyDance
+```
 
-# 2. Create and activate the main environment
+### 2. Create the Conda environment
+
+```bash
 conda env create -f environment.yml
 conda activate brain-fly
+```
 
-# 3. Install audio-analysis dependencies
+### 3. Install audio dependencies
+
+```bash
 pip install librosa soundfile
+```
 
-# 4. Install FlyGym v2.1.0 separately
+### 4. Install FlyGym
+
+FlyGym is an external dependency and is intentionally kept outside this repository.
+
+Install the required version separately:
+
+```bash
 git clone --branch v2.1.0 https://github.com/NeLy-EPFL/flygym.git
-pip install -e flygym
 
-# 5. (Optional) Brian2GeNN environment
+pip install -e flygym
+```
+
+Refer to the official [FlyGym repository](https://github.com/NeLy-EPFL/flygym) for additional installation requirements.
+
+### 5. Optional: Brian2GeNN environment
+
+```bash
 conda env create -f environment-brian2genn.yml
 conda activate brain-fly-brian2genn
 ```
 
----
+## Usage
 
-Usage
+The following examples assume that the required dependencies and input files are available.
 
-Beat analysis
+### Audio analysis
+
+Extract musical features and generate a beat-grid JSON file:
 
 ```bash
-# Writes Monstruo-Ado.mp3.beats.json by default
 python beat_analysis.py Monstruo-Ado.mp3
+```
 
-# Explicit output path
+Specify an output path:
+
+```bash
 python beat_analysis.py song.mp3 song.beats.json
 ```
 
-Input is sys.argv[1]; optional output JSON is sys.argv[2].
+By default, the output is written next to the input audio file.
 
-Beat-driven CPG dance
+### Beat-driven locomotion
+
+Run the CPG-based dance simulation:
 
 ```bash
 python fly_dance.py Monstruo-Ado.mp3.beats.json
 ```
 
-Writes demo_output/fly_dance/fly_dance.mp4 and
-demo_output/fly_dance/fly_dance_diagnostics.png.
+Generated files:
 
-Browser GUI
+```text
+demo_output/
+└── fly_dance/
+    ├── fly_dance.mp4
+    └── fly_dance_diagnostics.png
+```
+
+### Browser GUI
+
+Launch the local browser interface:
 
 ```bash
-# Audio path defaults to Monstruo-Ado.mp3
 python fly_dance_gui.py Monstruo-Ado.mp3
+```
 
-# Custom port and simulated duration
+Customize the port and simulation duration:
+
+```bash
 python fly_dance_gui.py Monstruo-Ado.mp3 --port=9000 --s=60
 ```
 
-The script starts an HTTP server bound to localhost:8765 (configurable via
---port) and prints the listening URL to stdout. It does not launch a
-browser automatically — open the printed URL manually. --s=30.0 sets the
-default simulated duration in seconds. The GUI is served over stdlib
-http.server; no Flask or WebSocket dependency.
+The server uses Python's standard-library `http.server` module and binds to localhost. It does not require Flask or a WebSocket dependency.
 
-MuJoCo viewer and plasticity
+Open the URL printed in the terminal manually.
+
+### Interactive MuJoCo simulation
+
+Launch the viewer-based controller:
 
 ```bash
-# Viewer window; add --headless to disable
 python fly_dance_live.py Monstruo-Ado.mp3 --s=30
+```
 
-# Dopamine-gated single-scalar learning
+Use `--headless` to disable the interactive viewer.
+
+The output is saved to:
+
+```text
+demo_output/fly_dance/fly_dance_live.mp4
+```
+
+### Dopamine-gated plasticity
+
+Run the experimental plasticity controller:
+
+```bash
 python fly_learn_dance.py Monstruo-Ado.mp3
 ```
 
-fly_dance_live.py writes demo_output/fly_dance/fly_dance_live.mp4.
-fly_learn_dance.py writes an MP4 and a learning-curve plot. "Live" here
-refers to the MuJoCo viewer window, not microphone input; both scripts read a
-file path and its .beats.json.
+This experiment produces a simulation video and a learning-curve plot.
 
-REINFORCE pose pops
+### Reinforcement-learning controller
+
+Run the REINFORCE-based pose policy:
 
 ```bash
 python fly_pop.py Monstruo-Ado.mp3 --s=20 --live
 ```
 
-Flags: --live (viewer), --s=20.0 (default). Writes
-demo_output/fly_dance/fly_pop_rl.mp4. The docstring mentions
---pose=choreo|random, but the current code does not parse that flag.
+Available documented options:
 
-CPG walking baseline
+- `--live`: Enable the interactive viewer.
+- `--s`: Set the simulation duration in seconds.
+
+The generated video is saved to:
+
+```text
+demo_output/fly_dance/fly_pop_rl.mp4
+```
+
+### Walking baseline
+
+Run the standalone CPG walking controller:
 
 ```bash
 python fly_sim.py
 ```
 
-Writes demo_output/cpg_controller/cpg_controller.mp4 and
-demo_output/cpg_controller/cpg_controller_diagnostics.png.
+This produces a walking simulation video and diagnostic plots.
 
-Spike visualization
+### Neural spike visualization
+
+Visualize a Parquet spike-recording file:
 
 ```bash
 python visualize_spikes.py data/results/round_01/brian2cpp_t1.0s_n1.parquet
 ```
 
-Defaults to data/results/pytorch_t1.0s_n1.parquet when no argument is
-given. Writes <input>_plot.png with a raster, PSTH, and top-20 neuron
-bar chart.
+When no input file is specified, the script uses:
 
-SEZ inspection
+```text
+data/results/pytorch_t1.0s_n1.parquet
+```
+
+The visualization includes a spike raster, PSTH, and top-20 neuron activity chart.
+
+### SEZ exploration
+
+Inspect and categorize the SEZ neuron dataset:
 
 ```bash
 python explore_sez.py
 python categorize_sez.py
 ```
 
-Both read data/sez_neurons.pickle and print summaries to stdout. No CLI
-flags; no file outputs.
+Both scripts read:
 
-Neural benchmark harness
+```text
+data/sez_neurons.pickle
+```
+
+### Neural benchmarking
+
+Run the default benchmark suite:
 
 ```bash
-# Default suite
 python main.py
+```
 
-# Paper grid: t_run=(0.1, 1, 10, 100), n_run=(1, 4, 8, 16, 32), 5 rounds
+Run the paper benchmark configuration:
+
+```bash
 python main.py --paper --run-label my_run
+```
 
-# Single backend
+Run a single backend:
+
+```bash
 python main.py --brian2-cpu --t_run 1 --n_run 1
+```
 
-# Timing-only run without spike I/O
+Disable spike recording and I/O:
+
+```bash
 python main.py --disable-spike-io
 ```
 
-Results are appended to data/benchmark-results.csv; spike parquet files
-go under data/results/. Run python main.py --help for the full flag list.
+For all available options:
+
+```bash
+python main.py --help
+```
+
+Benchmark summaries are written to:
+
+```text
+data/benchmark-results.csv
+```
+
+Spike recordings are stored under:
+
+```text
+data/results/
+```
+
+## Project Structure
+
+```text
+FlyDance/
+│
+├── beat_analysis.py
+├── fly_dance.py
+├── fly_dance_gui.py
+├── fly_dance_live.py
+├── fly_learn_dance.py
+├── fly_pop.py
+├── fly_sim.py
+│
+├── visualize_spikes.py
+├── explore_sez.py
+├── categorize_sez.py
+│
+├── ado_gui_html.py
+├── main.py
+│
+├── code/
+│   ├── benchmark.py
+│   ├── run_brian2_cuda.py
+│   ├── run_pytorch.py
+│   ├── run_nestgpu.py
+│   ├── run_genn.py
+│   └── run_brian2_genn.py
+│
+├── data/
+│   ├── 2025_Connectivity_783.parquet
+│   ├── 2025_Completeness_783.csv
+│   └── ...
+│
+├── scripts/
+│
+├── environment.yml
+├── environment-brian2genn.yml
+├── LICENSE
+│
+├── Monstruo-Ado.mp3
+└── Monstruo-Ado.mp3.beats.json
+```
+
+### Main components
+
+| File | Responsibility |
+|---|---|
+| `beat_analysis.py` | Extracts audio features and generates beat-grid JSON |
+| `fly_dance.py` | Beat-driven tripod CPG locomotion |
+| `fly_dance_gui.py` | Local HTTP server and browser GUI |
+| `fly_dance_live.py` | Interactive MuJoCo simulation with a small neural controller |
+| `fly_learn_dance.py` | Dopamine-gated plasticity experiment |
+| `fly_pop.py` | REINFORCE-based discrete pose policy |
+| `fly_sim.py` | Standalone CPG walking baseline |
+| `visualize_spikes.py` | Neural spike visualization |
+| `explore_sez.py` | SEZ dataset inspection |
+| `categorize_sez.py` | SEZ neuron categorization |
+| `ado_gui_html.py` | Embedded HTML, CSS, and JavaScript for the GUI |
+| `main.py` | Neural benchmark CLI entry point |
+| `code/` | Benchmark orchestration and backend implementations |
+| `data/` | Connectome data, neuron metadata, and benchmark outputs |
+| `scripts/` | Supporting setup scripts and backend sources |
+
+## Data and External Dependencies
+
+FlyDance uses external scientific datasets and software projects that are maintained independently.
+
+### FlyGym
+
+[FlyGym](https://github.com/NeLy-EPFL/flygym) provides the biomechanical simulation environment used for locomotion experiments.
+
+It is installed separately and is not vendored into this repository.
+
+### FlyWire
+
+[FlyWire](https://flywire.ai/) provides the connectome data used by the external neural-modeling infrastructure.
+
+The repository includes connectivity and completeness data associated with dataset version **783**.
+
+### fly-brain
+
+[fly-brain](https://github.com/eonsystemspbc/fly-brain) is the upstream project associated with the whole-brain LIF model and the neural benchmarking infrastructure.
+
+FlyDance retains the relevant benchmark components and data layout while keeping the external project separate.
+
+The source repository and its history remain available through the upstream project.
+
+## Repository Data
+
+Some generated and large files are intentionally excluded from Git.
+
+| Path | Reason |
+|---|---|
+| `*.parquet` and `data/results/*` | Large neural spike recordings |
+| `data/weight_coo.pkl` | Generated PyTorch weight matrices |
+| `data/weight_csr.pkl` | Generated PyTorch weight matrices |
+| `demo_output/` | Locally generated videos and diagnostics |
+| `code/output*` | Backend build artifacts |
+| `flygym/`, `flywire/` | External repositories |
+| `venv/`, `venv_flygym/` | Local Python environments |
+| `__pycache__/`, `*.pyc` | Python cache files |
+| `.DS_Store` | macOS metadata |
+
+The large `nature_2026_07` spike-data bundle is distributed separately.
+
+The committed FlyWire data files include:
+
+```text
+data/2025_Connectivity_783.parquet
+data/2025_Completeness_783.csv
+```
+
+## Experimental Scope and Limitations
+
+FlyDance is an experimental platform rather than a validated biological model of music perception or dance.
+
+Its controllers explore different computational approaches to generating movement from musical timing. These include deterministic CPG modulation, small neural networks, plasticity mechanisms, and reinforcement learning.
+
+The presence of a connectome-derived neural model in the repository does not imply that the audio-driven controllers reproduce the biological neural mechanisms of *Drosophila*.
+
+Likewise, the neural benchmarking pipeline is a separate computational component and should not be interpreted as evidence that the locomotion controllers are biologically equivalent to a whole-brain simulation.
+
+Quantitative validation, cross-backend comparisons, and biological interpretation should be evaluated independently.
+
+## License
+
+FlyDance is distributed under the **GNU General Public License v2.0 (GPL-2.0)**.
+
+See [LICENSE](LICENSE) for the complete license text.
+
+The benchmark code under `code/` and `main.py` contains derivative work from the external `fly-brain` project and retains the applicable GPL licensing terms and original copyright notices.
+
+## Credits and Acknowledgments
+
+FlyDance builds upon the work of several open-source and scientific projects.
+
+| Project | Contribution |
+|---|---|
+| [FlyGym](https://github.com/NeLy-EPFL/flygym) | Biomechanical simulation of *Drosophila* |
+| [FlyWire](https://flywire.ai/) | Connectome dataset and neural connectivity |
+| [fly-brain](https://github.com/eonsystemspbc/fly-brain) | Whole-brain LIF model and neural benchmarking infrastructure |
+| [MuJoCo](https://mujoco.org/) | Physics simulation engine |
+
+### Original Work
+
+Audio analysis, locomotion controllers, experimental learning mechanisms, GUI components, and visualization utilities developed for FlyDance are authored by **owarimono**.
+
+Copyright © 2026 owarimono.
 
 ---
 
-Project structure
-
-Path Purpose
-beat_analysis.py Beat, tempo, onset-envelope, and chroma extraction; writes .beats.json.
-fly_dance.py Maps a beat grid onto a tripod CPG; renders video and diagnostics.
-fly_dance_gui.py Stdlib HTTP server + browser GUI; simulation runs in a worker thread, streams JSON state and JPEG frames.
-fly_dance_live.py MuJoCo viewer mode with a 3×3 linear brain trained by a three-factor rule.
-fly_learn_dance.py Dopamine-gated plasticity experiment with a single learned beat-to-leg scalar.
-fly_pop.py REINFORCE-trained discrete pose policy for beat-snapped "pops".
-fly_sim.py Standalone CPG-driven walking simulation based on the FlyGym tutorial.
-visualize_spikes.py Raster, PSTH, and top-neuron plots from spike parquet files.
-categorize_sez.py Groups SEZ neuron types into descending, sensory, motor, and other.
-explore_sez.py Prints the structure and first entries of data/sez_neurons.pickle.
-ado_gui_html.py HTML/CSS/JS string for the GUI; imported by fly_dance_gui.py.
-main.py CLI entry point for the multi-backend benchmark suite.
-code/ Benchmark orchestrator (benchmark.py), backend runners, comparison scripts.
-data/ FlyWire connectivity and completeness data, SEZ pickle, benchmark CSV, and results.
-scripts/ WSL/CUDA setup script and NEST GPU source files.
-environment.yml Main conda environment (brain-fly).
-environment-brian2genn.yml Separate Brian2GeNN environment (brain-fly-brian2genn).
-Monstruo-Ado.mp3 Sample audio track.
-Monstruo-Ado.mp3.beats.json Pre-computed beat analysis for the sample track.
-
-Import graph:
-
-```
-fly_dance_gui.py   ──► ado_gui_html.py
-fly_dance_gui.py   ──► beat_analysis.py  (fallback if .beats.json missing)
-fly_dance_live.py  ──► beat_analysis.py  (same fallback)
-fly_learn_dance.py ──► beat_analysis.py  (same fallback)
-fly_pop.py         ──► beat_analysis.py  (same fallback)
-main.py            ──► code/benchmark.py (via sys.path insert)
-```
-
----
-
-Pipeline
-
-Audio pipeline:
-
-```
-audio.mp3
-   │
-   ▼
-beat_analysis.py
-   │
-   ▼
-audio.mp3.beats.json
-   │
-   ├── fly_dance.py        ──► demo_output/fly_dance/fly_dance.mp4
-   ├── fly_dance_gui.py    ──► browser GUI + demo_output/fly_dance/ado_blue.mp4
-   ├── fly_dance_live.py   ──► demo_output/fly_dance/fly_dance_live.mp4
-   ├── fly_learn_dance.py  ──► demo_output/fly_dance/fly_learn_dance.mp4
-   └── fly_pop.py          ──► demo_output/fly_dance/fly_pop_rl.mp4
-```
-
-Neural benchmark pipeline (independent of audio):
-
-```
-main.py ──► code/benchmark.py ──► backend runners ──► data/benchmark-results.csv
-                                                  └─► data/results/*.parquet
-```
-
----
-
-What is not in this repository
-
-.gitignore excludes the following; they must be obtained or generated
-locally:
-
-Excluded Reason
-*.parquet, data/results/* Large spike outputs. The nature_2026_07 bundle is distributed via Google Drive.
-data/weight_coo.pkl, data/weight_csr.pkl PyTorch weight matrices; regenerated on first run.
-demo_output/ Local simulation videos and diagnostics.
-code/output* Brian2 / Brian2CUDA standalone build artifacts.
-flygym/, flywire/ Separate repositories with their own Git history.
-venv/, venv_flygym/ Local virtual environments.
-__pycache__/, *.pyc, .DS_Store Standard Python and macOS cruft.
-
-FlyWire source data is committed as
-data/2025_Connectivity_783.parquet and data/2025_Completeness_783.csv.
-
----
-
-License
-
-Distributed under the GNU General Public License, version 2 (GPL-2.0).
-See LICENSE for the full text.
-
-The benchmark code under code/ and main.py is a derivative work of
-fly-brain and remains under
-the GPL terms declared in LICENSE. Original copyright notices are
-preserved in the source files.
-
----
-
-Credits and acknowledgments
-
-Project Role Link
-fly-brain Original whole-brain LIF model, benchmark harness, data layout https://github.com/eonsystemspbc/fly-brain
-FlyGym (v2.1.0) MuJoCo biomechanical simulation, NeLy lab https://github.com/NeLy-EPFL/flygym
-FlyWire (v783) Drosophila connectome dataset https://flywire.ai/
-New code in this repo fly_dance*.py, beat_analysis.py, fly_pop.py, fly_sim.py, visualize_spikes.py, categorize_sez.py, explore_sez.py, ado_gui_html.py — © 2026 owarimono, GPL-2.0 —
-
+<p align="center">
+  <i>From neural activity to movement — and from music to motion.</i>
+</p>
